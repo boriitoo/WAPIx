@@ -1,7 +1,7 @@
 import { Client, LocalAuth } from "whatsapp-web.js";
 import { SessionsService } from "@/sessions/sessions.service";
 import { Session } from "@/sessions/session";
-import { container, inject, injectable, singleton } from "tsyringe";
+import { inject, injectable, singleton } from "tsyringe";
 
 @injectable()
 @singleton()
