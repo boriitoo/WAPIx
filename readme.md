@@ -97,27 +97,6 @@ The application uses environment variables for configuration.
 | **Database** | _See `docker-compose.yml`_        | The PostgreSQL connection details (host: `localhost`, user/pass/db: `test`). | `src/data-source.ts`, `docker-compose.yml` |
 
 ---
-
-## 🔧 Development
-
-### Setup
-
-1.  Clone the repository and install dependencies:
-
-    ```bash
-    git clone [your-repo-link]
-    cd wapix
-    npm install
-    ```
-
-2.  **Ensure PostgreSQL is running** (e.g., via `docker compose up -d db`).
-
-3.  Start the development server with file watching:
-    ```bash
-    npm run start
-    ```
-    _(Note: Your project uses `npm run start` for build + run, and relies on `tsc` and `tsc-alias` for the build process)._
-
 ### Code Quality
 
 This project uses **Prettier** for code formatting and **Husky** to enforce formatting on commit.
