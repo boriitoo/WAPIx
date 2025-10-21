@@ -1,15 +1,21 @@
 import { Client, LocalAuth } from "whatsapp-web.js";
 import { SessionsService } from "@/sessions/sessions.service";
 import { Session } from "@/sessions/session";
+import {container, inject, injectable, singleton} from "tsyringe";
 
+@injectable()
+@singleton()
 export class ClientRegistry {
-  private static registry: Map<
+  private readonly registry: Map<
     String,
     { client: Client; connected: boolean; qr: string }
   > = new Map();
-  private static service: SessionsService = new SessionsService();
 
-  static async init(): Promise<void> {
+    constructor(
+        @inject(SessionsService) private readonly service: SessionsService,
+    ) {}
+
+   async init(): Promise<void> {
     console.log("Initializing existing sessions.");
     const sessions = await this.service.list();
     for (const session of sessions) {
@@ -17,7 +23,7 @@ export class ClientRegistry {
     }
   }
 
-  static async startClient(name: string, webhook: string): Promise<void> {
+  async startClient(name: string, webhook: string): Promise<void> {
     if (this.registry.has(name)) {
       console.log(`Registry with name ${name} already started.`);
       return;
@@ -60,11 +66,11 @@ export class ClientRegistry {
     client.initialize();
   }
 
-  static get(name: string) {
+   get(name: string) {
     return this.registry.get(name);
   }
 
-  static async stopClient(name: string): Promise<boolean> {
+   async stopClient(name: string): Promise<boolean> {
     const entry = this.get(name);
 
     if (!entry) {

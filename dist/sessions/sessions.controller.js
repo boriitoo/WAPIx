@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSession = exports.createSession = void 0;
 const client_registery_1 = require("../client.registery");
 const sessions_service_1 = require("../sessions/sessions.service");
+const tsyringe_1 = require("tsyringe");
 const createSession = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { sessionName, webhookUrl } = req.body;
     if (!sessionName || !webhookUrl) {
@@ -19,7 +20,8 @@ const createSession = (req, res, next) => __awaiter(void 0, void 0, void 0, func
             .status(400)
             .json({ error: "sessionName and webhookUrl are required" });
     }
-    yield client_registery_1.ClientRegistry.startClient(sessionName, webhookUrl);
+    const clientRegistry = tsyringe_1.container.resolve(client_registery_1.ClientRegistry);
+    yield clientRegistry.startClient(sessionName, webhookUrl);
     res.json({
         message: "Session created successfully",
         sessionName,
@@ -32,7 +34,7 @@ const getSession = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     if (!name) {
         return res.status(400).json({ error: "Session name is required" });
     }
-    const service = new sessions_service_1.SessionsService();
+    const service = tsyringe_1.container.resolve(sessions_service_1.SessionsService);
     const session = yield service.getByName(name);
     if (!session) {
         return res.status(404).json({ error: "Session not found" });

@@ -13,13 +13,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
+const tsyringe_1 = require("tsyringe");
 const app_1 = __importDefault(require("./app"));
 const config_1 = __importDefault(require("./config/config"));
 const data_source_1 = require("./data-source");
 const client_registery_1 = require("./client.registery");
+const session_1 = require("./sessions/session");
 data_source_1.AppDataSource.initialize()
     .then(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield client_registery_1.ClientRegistry.init();
+    tsyringe_1.container.registerInstance("SessionRepository", data_source_1.AppDataSource.getRepository(session_1.Session));
+    const clientRegistry = tsyringe_1.container.resolve(client_registery_1.ClientRegistry);
+    yield clientRegistry.init();
 }))
     .catch((err) => {
     console.log(err);

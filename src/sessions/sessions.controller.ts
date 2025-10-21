@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ClientRegistry } from "@/client.registery";
-import {SessionsService} from "@/sessions/sessions.service";
+import { SessionsService } from "@/sessions/sessions.service";
+import { container } from "tsyringe";
 
 export const createSession = async (
   req: Request,
@@ -15,7 +16,8 @@ export const createSession = async (
       .json({ error: "sessionName and webhookUrl are required" });
   }
 
-  await ClientRegistry.startClient(sessionName, webhookUrl);
+  const clientRegistry = container.resolve(ClientRegistry);
+  await clientRegistry.startClient(sessionName, webhookUrl);
 
   res.json({
     message: "Session created successfully",
@@ -35,11 +37,11 @@ export const getSession = async (
     return res.status(400).json({ error: "Session name is required" });
   }
 
-  const service = new SessionsService();
+  const service = container.resolve(SessionsService);
   const session = await service.getByName(name);
 
   if (!session) {
-      return res.status(404).json({error: "Session not found"});
+    return res.status(404).json({ error: "Session not found" });
   }
 
   res.json(session);

@@ -1,8 +1,13 @@
-import { AppDataSource } from "@/data-source";
 import { Session } from "@/sessions/session";
+import { inject, injectable } from "tsyringe";
+import { Repository } from "typeorm";
 
+@injectable()
 export class SessionsService {
-  private readonly repository = AppDataSource.getRepository(Session);
+  constructor(
+    @inject("SessionRepository")
+    private readonly repository: Repository<Session>,
+  ) {}
 
   public async list(): Promise<Session[]> {
     return await this.repository.find();
@@ -46,13 +51,13 @@ export class SessionsService {
   }
 
   public async updateQRCodeByName(name: string, qr: string): Promise<void> {
-      const session = await this.getByName(name);
+    const session = await this.getByName(name);
 
-      if (!session) {
-          return;
-      }
+    if (!session) {
+      return;
+    }
 
-      session.qr = qr;
-      await this.save(session);
+    session.qr = qr;
+    await this.save(session);
   }
 }
