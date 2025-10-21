@@ -5,6 +5,7 @@ import config from "@/config/config";
 import { AppDataSource } from "@/data-source";
 import { ClientRegistry } from "@/client.registery";
 import { Session } from "@/sessions/session";
+import { logger } from "@/logger";
 
 AppDataSource.initialize()
   .then(async () => {
@@ -14,11 +15,12 @@ AppDataSource.initialize()
     );
     const clientRegistry = container.resolve(ClientRegistry);
     await clientRegistry.init();
+    logger.info("Database and DI initialized.");
   })
   .catch((err) => {
-    console.log(err);
+    logger.error(err);
   });
 
 app.listen(config.port, () => {
-  console.log(`Server running on port ${config.port}`);
+  logger.info(`Server running on port ${config.port}`);
 });

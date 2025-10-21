@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/node": "^24.9.1",
+    "@types/pino": "^7.0.4",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "dotenv": "^17.2.3",
@@ -21,6 +22,7 @@
     "install": "^0.13.0",
     "nodemon": "^3.1.10",
     "npm": "^10.9.4",
+    "pino-pretty": "^13.1.2",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
@@ -30,7 +32,10 @@
   "private": true,
   "dependencies": {
     "@types/qrcode": "^1.5.5",
+    "Install": "npm:install@^0.13.0",
     "pg": "^8.16.3",
+    "pino": "^10.1.0",
+    "pino-http": "^11.0.0",
     "qrcode": "^1.5.4",
     "reflect-metadata": "^0.2.2",
     "swagger-jsdoc": "^6.2.8",

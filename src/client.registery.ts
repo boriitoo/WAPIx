@@ -2,6 +2,7 @@ import { Client, LocalAuth } from "whatsapp-web.js";
 import { SessionsService } from "@/sessions/sessions.service";
 import { Session } from "@/sessions/session";
 import { inject, injectable, singleton } from "tsyringe";
+import { logger } from "@/logger";
 
 @injectable()
 @singleton()
@@ -16,16 +17,18 @@ export class ClientRegistry {
   ) {}
 
   async init(): Promise<void> {
-    console.log("Initializing existing sessions.");
+    logger.info("Initializing existing sessions.");
     const sessions = await this.service.list();
+    logger.info(`Found ${sessions.length} sessions.`);
     for (const session of sessions) {
+      logger.info(`Initializing ${session.name} session.`);
       await this.startClient(session.name, session.webhook);
     }
   }
 
   async startClient(name: string, webhook: string): Promise<void> {
     if (this.registry.has(name)) {
-      console.log(`Registry with name ${name} already started.`);
+      logger.info(`Registry entry with name ${name} already started`);
       return;
     }
 
@@ -52,13 +55,13 @@ export class ClientRegistry {
     });
 
     client.on("ready", async () => {
-      console.log(`Client ${name} is ready!`);
+      logger.info(`Client with name ${name} ready`);
       await this.service.updateConnectivityByName(name, true);
       entry.connected = true;
     });
 
     client.on("disconnect", async () => {
-      console.log(`Client ${name} is disconnected!`);
+      logger.info(`Client with name ${name} disconnected`);
       await this.service.updateConnectivityByName(name, false);
       entry.connected = false;
     });

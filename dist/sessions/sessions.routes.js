@@ -98,10 +98,10 @@ router.get("/:name", sessions_controller_1.getSession);
  *       - name: format
  *         in: query
  *         required: false
- *         description: Response format (`json` or `image`)
+ *         description: Response format (`json` or `html`)
  *         schema:
  *           type: string
- *           enum: [json, image]
+ *           enum: [json, html]
  *           example: json
  *     responses:
  *       200:
