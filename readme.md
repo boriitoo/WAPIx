@@ -97,6 +97,7 @@ The application uses environment variables for configuration.
 | **Database** | _See `docker-compose.yml`_        | The PostgreSQL connection details (host: `localhost`, user/pass/db: `test`). | `src/data-source.ts`, `docker-compose.yml` |
 
 ---
+
 ### Code Quality
 
 This project uses **Prettier** for code formatting and **Husky** to enforce formatting on commit.
