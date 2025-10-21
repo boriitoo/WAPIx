@@ -9,7 +9,7 @@ import { apiLogger } from "@/logger";
 const app = express();
 
 app.use(express.json());
-app.use(pinoHttp({ logger: apiLogger }));
+// app.use(pinoHttp({ logger: apiLogger }));
 
 app.use("/api/sessions", sessionRoutes);
 app.use("/api", chatsRoutes);
