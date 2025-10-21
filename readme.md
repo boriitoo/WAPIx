@@ -37,7 +37,7 @@ This setup runs the WAPIx server and the required PostgreSQL database.
 1.  **Clone the repository:**
 
     ```bash
-    git clone [your-repo-link]
+    git clone https://github.com/boriitoo/WAPIx
     cd wapix
     ```
 
