@@ -13,4 +13,7 @@ export class Session {
 
   @Column()
   webhook: string;
+
+  @Column({ default: false })
+  isConnected: boolean;
 }

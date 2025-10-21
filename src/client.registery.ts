@@ -3,7 +3,10 @@ import { SessionsService } from "@/sessions/sessions.service";
 import { Session } from "@/sessions/session";
 
 export class ClientRegistry {
-  private static registry: Map<String, { client: Client }> = new Map();
+  private static registry: Map<
+    String,
+    { client: Client; connected: boolean; qr: string }
+  > = new Map();
   private static service: SessionsService = new SessionsService();
 
   static async init(): Promise<void> {
@@ -33,16 +36,45 @@ export class ClientRegistry {
     const client = new Client({
       authStrategy: new LocalAuth({ clientId: name }),
     });
-    this.registry.set(name, { client: client });
+
+    const entry = { client: client, connected: false, qr: "" };
+    this.registry.set(name, entry);
 
     client.on("qr", async (qr: string) => {
-      console.log(qr);
+      entry.qr = qr;
+      await this.service.updateQRCodeByName(name, qr);
     });
 
     client.on("ready", async () => {
       console.log(`Client ${name} is ready!`);
+      await this.service.updateConnectivityByName(name, true);
+      entry.connected = true;
+    });
+
+    client.on("disconnect", async () => {
+      console.log(`Client ${name} is disconnected!`);
+      await this.service.updateConnectivityByName(name, false);
+      entry.connected = false;
     });
 
     client.initialize();
+  }
+
+  static get(name: string) {
+    return this.registry.get(name);
+  }
+
+  static async stopClient(name: string): Promise<boolean> {
+    const entry = this.get(name);
+
+    if (!entry) {
+      return false;
+    }
+
+    await entry.client.destroy();
+    this.registry.delete(name);
+    await this.service.deleteByName(name);
+
+    return true;
   }
 }
