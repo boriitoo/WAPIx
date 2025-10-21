@@ -1,7 +1,7 @@
 import { Client, LocalAuth } from "whatsapp-web.js";
 import { SessionsService } from "@/sessions/sessions.service";
 import { Session } from "@/sessions/session";
-import {container, inject, injectable, singleton} from "tsyringe";
+import { container, inject, injectable, singleton } from "tsyringe";
 
 @injectable()
 @singleton()
@@ -11,11 +11,11 @@ export class ClientRegistry {
     { client: Client; connected: boolean; qr: string }
   > = new Map();
 
-    constructor(
-        @inject(SessionsService) private readonly service: SessionsService,
-    ) {}
+  constructor(
+    @inject(SessionsService) private readonly service: SessionsService,
+  ) {}
 
-   async init(): Promise<void> {
+  async init(): Promise<void> {
     console.log("Initializing existing sessions.");
     const sessions = await this.service.list();
     for (const session of sessions) {
@@ -66,11 +66,11 @@ export class ClientRegistry {
     client.initialize();
   }
 
-   get(name: string) {
+  get(name: string) {
     return this.registry.get(name);
   }
 
-   async stopClient(name: string): Promise<boolean> {
+  async stopClient(name: string): Promise<boolean> {
     const entry = this.get(name);
 
     if (!entry) {

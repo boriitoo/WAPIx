@@ -12,8 +12,8 @@ AppDataSource.initialize()
       "SessionRepository",
       AppDataSource.getRepository(Session),
     );
-      const clientRegistry = container.resolve(ClientRegistry);
-      await clientRegistry.init();
+    const clientRegistry = container.resolve(ClientRegistry);
+    await clientRegistry.init();
   })
   .catch((err) => {
     console.log(err);
