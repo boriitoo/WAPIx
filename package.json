@@ -32,6 +32,7 @@
   "private": true,
   "dependencies": {
     "@types/qrcode": "^1.5.5",
+    "axios": "^1.12.2",
     "Install": "npm:install@^0.13.0",
     "pg": "^8.16.3",
     "pino": "^10.1.0",

@@ -1,8 +1,10 @@
-import { Client, LocalAuth } from "whatsapp-web.js";
+import {Client, LocalAuth, Message} from "whatsapp-web.js";
 import { SessionsService } from "@/sessions/sessions.service";
 import { Session } from "@/sessions/session";
 import { inject, injectable, singleton } from "tsyringe";
 import { logger } from "@/logger";
+import {WebhookSender} from "@/webhook-sender";
+import {Message as InternalMessage} from '@/models/message'
 
 @injectable()
 @singleton()
@@ -59,6 +61,11 @@ export class ClientRegistry {
       await this.service.updateConnectivityByName(name, true);
       entry.connected = true;
     });
+
+    client.on("message", async (message: Message) => {
+        const webhookSender = new WebhookSender(webhook);
+        await webhookSender.send(InternalMessage.of(message));
+    })
 
     client.on("disconnect", async () => {
       logger.info(`Client with name ${name} disconnected`);

@@ -26,6 +26,8 @@ const whatsapp_web_js_1 = require("whatsapp-web.js");
 const sessions_service_1 = require("./sessions/sessions.service");
 const tsyringe_1 = require("tsyringe");
 const logger_1 = require("./logger");
+const webhook_sender_1 = require("./webhook-sender");
+const message_1 = require("./models/message");
 let ClientRegistry = class ClientRegistry {
     constructor(service) {
         this.service = service;
@@ -69,6 +71,10 @@ let ClientRegistry = class ClientRegistry {
                 logger_1.logger.info(`Client with name ${name} ready`);
                 yield this.service.updateConnectivityByName(name, true);
                 entry.connected = true;
+            }));
+            client.on("message", (msg) => __awaiter(this, void 0, void 0, function* () {
+                const webhookSender = new webhook_sender_1.WebhookSender(webhook);
+                yield webhookSender.send(message_1.Message.of(msg));
             }));
             client.on("disconnect", () => __awaiter(this, void 0, void 0, function* () {
                 logger_1.logger.info(`Client with name ${name} disconnected`);
