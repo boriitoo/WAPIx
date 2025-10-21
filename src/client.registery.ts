@@ -45,6 +45,7 @@ export class ClientRegistry {
     }
 
     const client = new Client({
+        puppeteer: {headless: false, args: ['--no-sandbox']},
       authStrategy: new LocalAuth({ clientId: name }),
     });
 
