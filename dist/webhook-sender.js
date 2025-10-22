@@ -40,13 +40,19 @@ var __importDefault =
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookSender = void 0;
 const axios_1 = __importDefault(require("axios"));
+const logger_1 = require("./logger");
 class WebhookSender {
   constructor(url) {
     this.url = url;
   }
   send(json) {
     return __awaiter(this, void 0, void 0, function* () {
-      yield axios_1.default.post(this.url, json);
+      logger_1.logger.info(`Sending webhook on ${this.url}`);
+      try {
+        yield axios_1.default.post(this.url, json);
+      } catch (error) {
+        logger_1.logger.error(`Error while trying to send webhook ${error}`);
+      }
     });
   }
 }

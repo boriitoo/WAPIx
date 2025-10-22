@@ -1,0 +1,70 @@
+<div class="max-w-2xl mx-auto">
+  <div class="bg-slate-800 rounded-lg border border-slate-700 p-8">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h2 class="text-2xl font-bold text-white">Session:
+          <span class="text-green-400">{{sessionName}}</span></h2>
+        <p class="text-slate-400 text-sm mt-1">Scan the QR code with WhatsApp to
+          connect</p>
+      </div>
+      <div class="text-right">
+        <p class="text-xs text-slate-400">Auto-refreshing every 3 seconds</p>
+        <div class="mt-2 flex items-center gap-2">
+          <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-sm text-green-400">Live</span>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="bg-slate-900 rounded-lg border border-slate-700 p-8 flex justify-center items-center min-h-96"
+    >
+      <div id="qrContainer" class="text-center">
+        <div class="animate-pulse text-slate-400">Loading QR code...</div>
+      </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-2 gap-4">
+      <div class="bg-slate-900 rounded-lg p-4 border border-slate-700">
+        <p class="text-xs text-slate-400 mb-1">Session Name</p>
+        <p class="text-white font-mono">{{sessionName}}</p>
+      </div>
+      <div class="bg-slate-900 rounded-lg p-4 border border-slate-700">
+        <p class="text-xs text-slate-400 mb-1">Status</p>
+        <p class="text-white">
+          {{#if isConnected}}
+            <span class="text-green-400 font-medium">● Connected</span>
+          {{else}}
+            <span class="text-yellow-400 font-medium">● Waiting for scan</span>
+          {{/if}}
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-6 flex gap-3">
+      <a
+        href="/"
+        class="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition text-center"
+      >
+        Back to Sessions
+      </a>
+      <button
+        onclick="location.reload()"
+        class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+      >
+        Refresh Now
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const sessionName = '{{sessionName}}'; const qrContainer =
+  document.getElementById('qrContainer'); async function loadQRCode() { try {
+  const response = await fetch(`/api/sessions/${sessionName}/qr?format=html`);
+  if (!response.ok) { throw new Error('Failed to load QR code'); }
+  qrContainer.innerHTML = await response.text(); } catch (error) {
+  qrContainer.innerHTML = `<div class="text-red-400
+  text-sm">${error.message}</div>`; } } loadQRCode(); setInterval(loadQRCode,
+  3000);
+</script>

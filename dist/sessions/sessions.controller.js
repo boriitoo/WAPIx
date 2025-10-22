@@ -38,12 +38,16 @@ var __importDefault =
     return mod && mod.__esModule ? mod : { default: mod };
   };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getQrCode = exports.getSession = exports.createSession = void 0;
+exports.getSessions =
+  exports.getQrCode =
+  exports.getSession =
+  exports.createSession =
+    void 0;
 const client_registery_1 = require("../client.registery");
 const sessions_service_1 = require("../sessions/sessions.service");
 const tsyringe_1 = require("tsyringe");
 const qrcode_1 = __importDefault(require("qrcode"));
-const createSession = (req, res, next) =>
+const createSession = (req, res) =>
   __awaiter(void 0, void 0, void 0, function* () {
     const { sessionName, webhookUrl } = req.body;
     if (!sessionName || !webhookUrl) {
@@ -62,7 +66,7 @@ const createSession = (req, res, next) =>
     });
   });
 exports.createSession = createSession;
-const getSession = (req, res, next) =>
+const getSession = (req, res) =>
   __awaiter(void 0, void 0, void 0, function* () {
     const { name } = req.params;
     if (!name) {
@@ -78,7 +82,7 @@ const getSession = (req, res, next) =>
     res.json(session);
   });
 exports.getSession = getSession;
-const getQrCode = (req, res, next) =>
+const getQrCode = (req, res) =>
   __awaiter(void 0, void 0, void 0, function* () {
     const { name } = req.params;
     const { format = "json" } = req.query;
@@ -105,3 +109,12 @@ const getQrCode = (req, res, next) =>
     }
   });
 exports.getQrCode = getQrCode;
+const getSessions = (req, res) =>
+  __awaiter(void 0, void 0, void 0, function* () {
+    const service = tsyringe_1.container.resolve(
+      sessions_service_1.SessionsService,
+    );
+    const sessions = yield service.list();
+    return res.json(sessions);
+  });
+exports.getSessions = getSessions;

@@ -4,11 +4,7 @@ import { SessionsService } from "@/sessions/sessions.service";
 import { container } from "tsyringe";
 import QRCode from "qrcode";
 
-export const createSession = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const createSession = async (req: Request, res: Response) => {
   const { sessionName, webhookUrl } = req.body;
 
   if (!sessionName || !webhookUrl) {
@@ -27,11 +23,7 @@ export const createSession = async (
   });
 };
 
-export const getSession = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const getSession = async (req: Request, res: Response) => {
   const { name } = req.params;
 
   if (!name) {
@@ -48,11 +40,7 @@ export const getSession = async (
   res.json(session);
 };
 
-export const getQrCode = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const getQrCode = async (req: Request, res: Response) => {
   const { name } = req.params;
   const { format = "json" } = req.query;
 
@@ -78,4 +66,11 @@ export const getQrCode = async (
     default:
       res.status(500).json({ error: `Unsupported format ${format}.` });
   }
+};
+
+export const getSessions = async (req: Request, res: Response) => {
+  const service = container.resolve(SessionsService);
+  const sessions = await service.list();
+
+  return res.json(sessions);
 };

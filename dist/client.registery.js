@@ -105,6 +105,7 @@ let ClientRegistry = class ClientRegistry {
         });
       }
       const client = new whatsapp_web_js_1.Client({
+        puppeteer: { headless: true, args: ["--no-sandbox"] },
         authStrategy: new whatsapp_web_js_1.LocalAuth({ clientId: name }),
       });
       const entry = { client: client, connected: false, qr: "" };
@@ -122,10 +123,10 @@ let ClientRegistry = class ClientRegistry {
           entry.connected = true;
         }),
       );
-      client.on("message", (msg) =>
+      client.on("message", (message) =>
         __awaiter(this, void 0, void 0, function* () {
           const webhookSender = new webhook_sender_1.WebhookSender(webhook);
-          yield webhookSender.send(message_1.Message.of(msg));
+          yield webhookSender.send(message_1.Message.of(message));
         }),
       );
       client.on("disconnect", () =>

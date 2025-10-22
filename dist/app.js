@@ -12,11 +12,21 @@ const sessions_routes_1 = __importDefault(
 const chats_routes_1 = __importDefault(require("./chats/chats.routes"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
+const pino_http_1 = require("pino-http");
+const logger_1 = require("./logger");
+const pages_routes_1 = __importDefault(require("./pages/pages.routes"));
+const express_handlebars_1 = require("express-handlebars");
 const app = (0, express_1.default)();
+app.engine("handlebars", (0, express_handlebars_1.engine)());
 app.use(express_1.default.json());
-// app.use(pinoHttp({ logger: apiLogger }));
+if (process.env.NODE_ENV === "production") {
+  app.use((0, pino_http_1.pinoHttp)({ logger: logger_1.apiLogger }));
+}
+app.set("view engine", "handlebars");
+app.set("views", "./src/views");
 app.use("/api/sessions", sessions_routes_1.default);
 app.use("/api", chats_routes_1.default);
+app.use("/", pages_routes_1.default);
 app.use(
   "/docs",
   swagger_ui_express_1.default.serve,

@@ -3,7 +3,9 @@ import {
   createSession,
   getQrCode,
   getSession,
+  getSessions,
 } from "@/sessions/sessions.controller";
+
 const router = Router();
 
 /**
@@ -124,5 +126,7 @@ router.get("/:name", getSession);
  *         description: Session name is required
  */
 router.get("/:name/qr", getQrCode);
+
+router.get("/", getSessions);
 
 export default router;

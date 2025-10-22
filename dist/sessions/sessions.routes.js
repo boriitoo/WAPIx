@@ -118,4 +118,5 @@ router.get("/:name", sessions_controller_1.getSession);
  *         description: Session name is required
  */
 router.get("/:name/qr", sessions_controller_1.getQrCode);
+router.get("/", sessions_controller_1.getSessions);
 exports.default = router;
