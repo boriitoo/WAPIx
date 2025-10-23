@@ -51,6 +51,7 @@
     <div
       id="errorMessage"
       class="mt-4 p-3 bg-red-900 border border-red-700 rounded-lg text-red-200 hidden"
+
     ></div>
     <div
       id="successMessage"
@@ -59,21 +60,4 @@
   </div>
 </div>
 
-<script>
-  document.getElementById('createSessionForm').addEventListener('submit', async
-  (e) => { e.preventDefault(); const sessionName =
-  document.getElementById('sessionName').value; const webhookUrl =
-  document.getElementById('webhookUrl').value; const errorDiv =
-  document.getElementById('errorMessage'); const successDiv =
-  document.getElementById('successMessage'); errorDiv.classList.add('hidden');
-  successDiv.classList.add('hidden'); try { const response = await
-  fetch('/api/sessions', { method: 'POST', headers: { 'Content-Type':
-  'application/json', }, body: JSON.stringify({ sessionName, webhookUrl, }), });
-  if (!response.ok) { throw new Error('Failed to create session'); } const data
-  = await response.json(); successDiv.textContent = 'Session created
-  successfully! Redirecting...'; successDiv.classList.remove('hidden');
-  setTimeout(() => { window.location.href = `/sessions/${sessionName}/qr`; },
-  1500); } catch (error) { errorDiv.textContent = error.message || 'An error
-  occurred while creating the session'; errorDiv.classList.remove('hidden'); }
-  });
-</script>
+<script type="application/javascript" src="/public/scripts/create_session.js"></script>
