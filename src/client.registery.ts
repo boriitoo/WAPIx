@@ -1,18 +1,22 @@
-import { Client, LocalAuth, Message } from "whatsapp-web.js";
+import { Client, LocalAuth, Message, WAState } from "whatsapp-web.js";
 import { SessionsService } from "@/sessions/sessions.service";
 import { Session } from "@/sessions/session";
 import { inject, injectable, singleton } from "tsyringe";
 import { logger } from "@/logger";
 import { WebhookSender } from "@/webhook-sender";
 import { Message as InternalMessage } from "@/models/message";
+import { clearInterval } from "node:timers";
+
+interface ClientEntry {
+  client: Client;
+  connected: boolean;
+  pingInterval?: NodeJS.Timeout;
+}
 
 @injectable()
 @singleton()
 export class ClientRegistry {
-  private readonly registry: Map<
-    String,
-    { client: Client; connected: boolean; qr: string }
-  > = new Map();
+  private readonly registry: Map<String, ClientEntry> = new Map();
 
   constructor(
     @inject(SessionsService) private readonly service: SessionsService,
@@ -52,11 +56,10 @@ export class ClientRegistry {
       authStrategy: new LocalAuth({ clientId: name }),
     });
 
-    const entry = { client: client, connected: false, qr: "" };
+    const entry: ClientEntry = { client: client, connected: false };
     this.registry.set(name, entry);
 
     client.on("qr", async (qr: string) => {
-      entry.qr = qr;
       await this.service.updateQRCodeByName(name, qr);
     });
 
@@ -77,6 +80,16 @@ export class ClientRegistry {
       entry.connected = false;
     });
 
+    entry.pingInterval = setInterval(async () => {
+      const state = await client.getState();
+
+      if (state !== WAState.CONNECTED) {
+        return;
+      }
+
+      await this.notifyHealthCheck(name, state);
+    }, 6000);
+
     client.initialize();
   }
 
@@ -91,6 +104,11 @@ export class ClientRegistry {
       return false;
     }
 
+    if (entry.pingInterval) {
+      logger.info(`Interval cleared for ${name}.`);
+      clearInterval(entry.pingInterval);
+    }
+
     await entry.client.destroy();
     logger.info(`Client with name ${name} destroyed.`);
     this.registry.delete(name);
@@ -98,5 +116,16 @@ export class ClientRegistry {
     await this.service.deleteByName(name);
 
     return true;
+  }
+
+  private async notifyHealthCheck(name: string, state: WAState): Promise<void> {
+      const session = await this.service.getByName(name);
+
+      if (!session) {
+          return;
+      }
+
+      session.lastSeenAt = new Date();
+      await this.service.save(session);
   }
 }
