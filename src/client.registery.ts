@@ -47,9 +47,7 @@ export class ClientRegistry {
     const client = new Client({
       puppeteer: {
         headless: true,
-        args: [
-          "--no-sandbox",
-        ],
+        args: ["--no-sandbox"],
       },
       authStrategy: new LocalAuth({ clientId: name }),
     });
@@ -94,7 +92,9 @@ export class ClientRegistry {
     }
 
     await entry.client.destroy();
+    logger.info(`Client with name ${name} destroyed.`);
     this.registry.delete(name);
+    logger.info(`Client with name ${name} removed from registry.`);
     await this.service.deleteByName(name);
 
     return true;

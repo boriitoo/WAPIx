@@ -74,3 +74,20 @@ export const getSessions = async (req: Request, res: Response) => {
 
   return res.json(sessions);
 };
+
+export const deleteSession = async (req: Request, res: Response) => {
+  const { name } = req.params;
+
+  if (!name) {
+    return res.status(400).json({ error: "Session name is required" });
+  }
+
+  const clientRegistry = container.resolve(ClientRegistry);
+  const succeed = await clientRegistry.stopClient(name);
+
+  if (!succeed) {
+    return res.status(500).json({ error: "Unable to stop client" });
+  }
+
+  return res.status(200).json({});
+};

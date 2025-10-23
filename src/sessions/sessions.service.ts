@@ -1,6 +1,7 @@
 import { Session } from "@/sessions/session";
 import { inject, injectable } from "tsyringe";
 import { Repository } from "typeorm";
+import { logger } from "@/logger";
 
 @injectable()
 export class SessionsService {
@@ -33,6 +34,7 @@ export class SessionsService {
     }
 
     await this.repository.delete(session);
+    logger.info(`Session ${name} deleted.`);
     return true;
   }
 

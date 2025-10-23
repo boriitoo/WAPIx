@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createSession,
+  deleteSession,
   getQrCode,
   getSession,
   getSessions,
@@ -128,5 +129,7 @@ router.get("/:name", getSession);
 router.get("/:name/qr", getQrCode);
 
 router.get("/", getSessions);
+
+router.delete("/:name", deleteSession);
 
 export default router;
