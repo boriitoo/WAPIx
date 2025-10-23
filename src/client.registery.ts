@@ -88,7 +88,7 @@ export class ClientRegistry {
       }
 
       await this.notifyHealthCheck(name, state);
-    }, 6000);
+    }, 60 * 1000);
 
     client.initialize();
   }
@@ -119,13 +119,13 @@ export class ClientRegistry {
   }
 
   private async notifyHealthCheck(name: string, state: WAState): Promise<void> {
-      const session = await this.service.getByName(name);
+    const session = await this.service.getByName(name);
 
-      if (!session) {
-          return;
-      }
+    if (!session) {
+      return;
+    }
 
-      session.lastSeenAt = new Date();
-      await this.service.save(session);
+    session.lastSeenAt = new Date();
+    await this.service.save(session);
   }
 }
