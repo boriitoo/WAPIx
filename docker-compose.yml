@@ -30,9 +30,13 @@ services:
       DB_PORT: 5432
     networks:
       - app_network
+    volumes:
+      - ~/wapix-data/wwebjs_auth:/app/.wwebjs_auth
+      - ~/wapix-data/wwebjs_cache:/app/.wwebjs_cache
 
 volumes:
   postgres_data:
+  wapix_data:
 
 networks:
   app_network:
