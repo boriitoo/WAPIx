@@ -46,18 +46,9 @@ export class ClientRegistry {
 
     const client = new Client({
       puppeteer: {
-        executablePath:
-          process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/google-chrome",
+        headless: true,
         args: [
           "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-accelerated-2d-canvas",
-          "--no-zygote",
-          "--no-first-run",
-          "--disable-gpu",
-          "--single-process",
-          "--headless=new",
         ],
       },
       authStrategy: new LocalAuth({ clientId: name }),
