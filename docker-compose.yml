@@ -30,8 +30,6 @@ services:
       DB_PORT: 5432
     networks:
       - app_network
-    volumes:
-      - $HOME/bot:/app
 
 volumes:
   postgres_data:
