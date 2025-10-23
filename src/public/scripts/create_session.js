@@ -25,8 +25,7 @@ document
         try {
           const errorData = await response.json();
           errorMsg = errorData.message || errorMsg;
-        } catch (jsonError) {
-        }
+        } catch (jsonError) {}
         throw new Error(errorMsg);
       }
 
