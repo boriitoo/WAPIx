@@ -30,7 +30,7 @@ export class SessionClient {
     this._queue = new Bull(this.session.name, {
       limiter: {
         max: 1,
-        duration: 500,
+        duration: 1000,
       },
       redis: {
         host: process.env.REDIS_HOST || "localhost",
@@ -84,7 +84,17 @@ export class SessionClient {
     });
 
     this.queue.process(async (job: any) => {
-      console.log(job);
+      logger.info(`[${this.session.name}]: Processing item in queue.`);
+      const { text, chatId } = job.data;
+
+      logger.info(`[${this.session.name}]: ${chatId} - ${text}`);
+      try {
+        await this.client.sendMessage(chatId, text);
+      } catch (error) {
+        // ignore
+      }
+
+      return { success: true };
     });
   }
 

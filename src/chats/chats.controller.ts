@@ -49,11 +49,9 @@ export const sendMessage = async (req: Request, res: Response) => {
     return res.status(401).json({ error: "Client not connected" });
   }
 
-  logger.info(`Trying to send message to ${chatId} with ${message}`);
   await client.queue.add({
-    abc: message,
+    text: message,
+    chatId: chatId,
   });
-  logger.info(`Added to queue`);
-  // await client.client.sendMessage(chatId, message);
   return res.status(200).json();
 };
