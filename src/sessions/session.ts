@@ -1,4 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 @Entity()
 export class Session {
@@ -14,6 +19,15 @@ export class Session {
   @Column()
   webhook: string;
 
-  @Column()
+  @CreateDateColumn()
   lastSeenAt: Date;
+
+  public get isActive() {
+    return this.secondsSinceLastSeenAt() < 60;
+  }
+
+  public secondsSinceLastSeenAt() {
+    const now = new Date();
+    return (now.getTime() - this.lastSeenAt.getTime()) / 1000;
+  }
 }

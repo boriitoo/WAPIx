@@ -1,0 +1,123 @@
+<div class="space-y-8">
+  <!-- Session Info Header -->
+  <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+    <div class="flex justify-between items-start mb-4">
+      <div>
+        <h2 class="text-3xl font-bold text-white mb-2">{{sessionName}}</h2>
+        <p class="text-slate-400">Session ID: {{id}}</p>
+      </div>
+      <div class="flex items-center gap-2">
+        {{#if isConnected}}
+          <span
+            class="inline-flex items-center gap-2 px-4 py-2 bg-green-900 text-green-200 rounded-full font-medium"
+          >
+            <span
+              class="w-3 h-3 bg-green-400 rounded-full animate-pulse"
+            ></span>
+            Connected
+          </span>
+        {{else}}
+          <span
+            class="inline-flex items-center gap-2 px-4 py-2 bg-slate-700 text-slate-300 rounded-full font-medium"
+          >
+            <span class="w-3 h-3 bg-slate-500 rounded-full"></span>
+            Disconnected
+          </span>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <div>
+        <p class="text-sm text-slate-400 mb-2">Webhook URL</p>
+        <p
+          class="text-slate-300 break-all font-mono text-sm bg-slate-700 p-3 rounded"
+        >{{webhook}}</p>
+      </div>
+      <div>
+        <p class="text-sm text-slate-400 mb-2">Created</p>
+        <p class="text-slate-300">{{createdAt}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logs Section -->
+  <div class="bg-slate-800 border border-slate-700 rounded-lg p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold text-white">Session Logs</h3>
+      <div class="flex gap-2">
+        <button
+          onclick="refreshLogs()"
+          class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition text-sm"
+        >
+          Refresh
+        </button>
+        <label
+          class="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition cursor-pointer text-sm"
+        >
+          <input
+            type="checkbox"
+            id="autoRefresh"
+            checked
+            onchange="toggleAutoRefresh()"
+          />
+          Auto-refresh
+        </label>
+      </div>
+    </div>
+
+    <!-- Logs Container -->
+    <div
+      id="logsContainer"
+      class="bg-slate-900 rounded-lg p-4 font-mono text-sm max-h-96 overflow-y-auto space-y-1"
+    >
+      <p class="text-slate-500">Loading logs...</p>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex gap-3">
+    <a
+      href="/sessions/{{id}}/edit"
+      class="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition"
+    >
+      Edit Session
+    </a>
+    <button
+      onclick="deleteSession('{{id}}')"
+      class="px-6 py-2 bg-red-900 hover:bg-red-800 text-red-200 rounded-lg transition"
+    >
+      Delete Session
+    </button>
+  </div>
+</div>
+
+<script>
+  let autoRefreshInterval = null; const sessionName = '{{sessionName}}'; //
+  Initial load refreshLogs(); // Auto-refresh setup if
+  (document.getElementById('autoRefresh').checked) { autoRefreshInterval =
+  setInterval(refreshLogs, 3000); } function refreshLogs() {
+  fetch(`/api/sessions/${sessionName}/logs`) .then(res => res.json()) .then(data
+  => { const container = document.getElementById('logsContainer'); if
+  (!data.logs || data.logs.length === 0) { container.innerHTML = '<p
+  class="text-slate-500">No logs yet</p>'; return; } container.innerHTML =
+  data.logs .map(log => { const timestamp = new
+  Date(log.timestamp).toLocaleTimeString(); const levelColor = { 'error':
+  'text-red-400', 'warn': 'text-yellow-400', 'info': 'text-blue-400', 'debug':
+  'text-slate-500' }[log.level] || 'text-slate-400'; return `<div class="flex
+  gap-3"> <span class="text-slate-600 flex-shrink-0">${timestamp}</span> <span
+  class="${levelColor} flex-shrink-0 uppercase text-xs font-bold
+  w-12">${log.level}</span> <span class="text-slate-300
+  flex-1">${escapeHtml(log.message)}</span> </div>`; }) .join(''); }) .catch(err
+  => { document.getElementById('logsContainer').innerHTML = `<p
+  class="text-red-400">Error loading logs: ${err.message}</p>`; }); } function
+  toggleAutoRefresh() { const isChecked =
+  document.getElementById('autoRefresh').checked; if (isChecked) {
+  autoRefreshInterval = setInterval(refreshLogs, 3000); } else {
+  clearInterval(autoRefreshInterval); } } function deleteSession(id) { if
+  (confirm('Are you sure you want to delete this session? This action cannot be
+  undone.')) { fetch(`/api/sessions/${id}`, { method: 'DELETE' }) .then(() =>
+  window.location.href = '/') .catch(err => alert('Error deleting session: ' +
+  err.message)); } } function escapeHtml(text) { const div =
+  document.createElement('div'); div.textContent = text; return div.innerHTML; }
+</script>

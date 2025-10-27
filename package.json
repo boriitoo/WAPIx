@@ -38,6 +38,7 @@
   "dependencies": {
     "@types/qrcode": "^1.5.5",
     "axios": "^1.12.2",
+    "bull": "^4.16.5",
     "express-handlebars": "^7.1.3",
     "handlebars": "^4.7.8",
     "Install": "npm:install@^0.13.0",
@@ -48,6 +49,7 @@
     "reflect-metadata": "^0.2.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "timeago.js": "^4.0.2",
     "tsyringe": "^4.10.0",
     "typeorm": "^0.3.27",
     "whatsapp-web.js": "^1.34.1"
