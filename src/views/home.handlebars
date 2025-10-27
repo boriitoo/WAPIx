@@ -16,7 +16,7 @@
               <p class="text-sm text-slate-400">ID: {{id}}</p>
             </div>
             <div class="flex items-center gap-2">
-              {{#if isConnected}}
+              {{#if isActive}}
                 <span
                   class="inline-flex items-center gap-1 px-3 py-1 bg-green-900 text-green-200 rounded-full text-xs font-medium"
                 >
@@ -34,12 +34,6 @@
             </div>
           </div>
 
-          <!--                    {{#if qr}}-->
-                    <!--                        <div class="mb-4 p-4 bg-slate-700 rounded-lg flex items-center justify-center">-->
-                    <!--                            <img src="{{qr}}" alt="QR Code for {{name}}" class="w-32 h-32">-->
-                    <!--                        </div>-->
-                        <!--                    {{/if}}-->
-
           <div class="space-y-3 mb-4 text-sm">
             <div>
               <p class="text-slate-400">Webhook URL</p>
@@ -49,12 +43,21 @@
             </div>
           </div>
 
+          <div class="space-y-3 mb-4 text-sm">
+            <div>
+              <p class="text-slate-400">Last seen</p>
+              <p
+                class="text-slate-300 break-all font-mono text-xs"
+              >{{lastSeen}}</p>
+            </div>
+          </div>
+
           <div class="flex gap-2">
             <a
-              href="/sessions/{{id}}/edit"
+              href="/sessions/{{id}}"
               class="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded transition text-center text-sm"
             >
-              Edit
+              View
             </a>
             <button
               onclick="deleteSession('{{name}}')"

@@ -1,18 +1,13 @@
-import { Client, LocalAuth, Message } from "whatsapp-web.js";
 import { SessionsService } from "@/sessions/sessions.service";
 import { Session } from "@/sessions/session";
 import { inject, injectable, singleton } from "tsyringe";
 import { logger } from "@/logger";
-import { WebhookSender } from "@/webhook-sender";
-import { Message as InternalMessage } from "@/models/message";
+import { SessionClient } from "@/sessions/session.client";
 
 @injectable()
 @singleton()
 export class ClientRegistry {
-  private readonly registry: Map<
-    String,
-    { client: Client; connected: boolean; qr: string }
-  > = new Map();
+  private readonly registry: Map<String, SessionClient> = new Map();
 
   constructor(
     @inject(SessionsService) private readonly service: SessionsService,
@@ -44,40 +39,9 @@ export class ClientRegistry {
       } as Session);
     }
 
-    const client = new Client({
-      puppeteer: {
-        headless: true,
-        args: ["--no-sandbox"],
-      },
-      authStrategy: new LocalAuth({ clientId: name }),
-    });
-
-    const entry = { client: client, connected: false, qr: "" };
+    const entry: SessionClient = new SessionClient(session);
     this.registry.set(name, entry);
-
-    client.on("qr", async (qr: string) => {
-      entry.qr = qr;
-      await this.service.updateQRCodeByName(name, qr);
-    });
-
-    client.on("ready", async () => {
-      logger.info(`Client with name ${name} ready`);
-      await this.service.updateConnectivityByName(name, true);
-      entry.connected = true;
-    });
-
-    client.on("message", async (message: Message) => {
-      const webhookSender = new WebhookSender(webhook);
-      await webhookSender.send(InternalMessage.of(message));
-    });
-
-    client.on("disconnect", async () => {
-      logger.info(`Client with name ${name} disconnected`);
-      await this.service.updateConnectivityByName(name, false);
-      entry.connected = false;
-    });
-
-    client.initialize();
+    await entry.start();
   }
 
   get(name: string) {
@@ -91,11 +55,7 @@ export class ClientRegistry {
       return false;
     }
 
-    await entry.client.destroy();
-    logger.info(`Client with name ${name} destroyed.`);
-    this.registry.delete(name);
-    logger.info(`Client with name ${name} removed from registry.`);
-    await this.service.deleteByName(name);
+    await entry.stop();
 
     return true;
   }

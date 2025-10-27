@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { container } from "tsyringe";
 import { ClientRegistry } from "@/client.registery";
 import { Chat } from "@/chats/chat";
@@ -18,7 +18,7 @@ export const getChats = async (req: Request, res: Response) => {
     return res.status(404).json({ error: "Client not found." });
   }
 
-  if (!client.connected) {
+  if (!(await client.isConnected())) {
     return res.status(401).json({ error: "Client not connected" });
   }
 
@@ -45,11 +45,13 @@ export const sendMessage = async (req: Request, res: Response) => {
     return res.status(404).json({ error: "Client not found" });
   }
 
-  if (!client.connected) {
+  if (!(await client.isConnected())) {
     return res.status(401).json({ error: "Client not connected" });
   }
 
-  logger.info(`Trying to send message to ${chatId} with ${message}`);
-  await client.client.sendMessage(chatId, message);
+  await client.queue.add({
+    text: message,
+    chatId: chatId,
+  });
   return res.status(200).json();
 };

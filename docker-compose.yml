@@ -15,6 +15,18 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app_network
+
   app:
     build: .
     container_name: node_app
@@ -22,12 +34,15 @@ services:
       - "3009:3000"
     depends_on:
       - db
+      - redis
     environment:
       DB_HOST: db
       DB_USER: test
       DB_PASSWORD: test
       DB_NAME: test
       DB_PORT: 5432
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     networks:
       - app_network
     volumes:
@@ -37,6 +52,7 @@ services:
 volumes:
   postgres_data:
   wapix_data:
+  redis_data:
 
 networks:
   app_network:

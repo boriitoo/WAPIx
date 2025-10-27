@@ -33,23 +33,9 @@ export class SessionsService {
       return false;
     }
 
-    await this.repository.delete(session);
+    await this.repository.delete(session.id);
     logger.info(`Session ${name} deleted.`);
     return true;
-  }
-
-  public async updateConnectivityByName(
-    name: string,
-    connected: boolean,
-  ): Promise<void> {
-    const session = await this.getByName(name);
-
-    if (!session) {
-      return;
-    }
-
-    session.isConnected = connected;
-    await this.save(session);
   }
 
   public async updateQRCodeByName(name: string, qr: string): Promise<void> {
